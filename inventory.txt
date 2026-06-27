@@ -1,0 +1,2 @@
+3500,pencil,Stationary,10.0,50,567
+35008,Book,Stationary,200.0,30,678

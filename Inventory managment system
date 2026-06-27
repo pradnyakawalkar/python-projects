@@ -1,0 +1,235 @@
+import os
+from datetime import datetime
+# ==============================
+# INVENTORY DATA STRUCTURE
+# ==============================
+inventory = {}
+transactions = []
+# ==============================
+# LOAD INVENTORY FROM FILE
+# ==============================
+def load_inventory():
+    if not os.path.exists("inventory.txt"):
+        return
+
+    with open("inventory.txt", "r") as file:
+        for line in file:
+            data = line.strip().split(",")
+
+            pid = data[0]
+            inventory[pid] = {
+                "name": data[1],
+                "category": data[2],
+                "price": float(data[3]),
+                "qty": int(data[4]),
+                "reorder": int(data[5])
+            }
+# ==============================
+# SAVE INVENTORY TO FILE
+# ==============================
+def save_inventory():
+    with open("inventory.txt", "w") as file:
+        for pid, p in inventory.items():
+            file.write(
+                f"{pid},{p['name']},{p['category']},{p['price']},{p['qty']},{p['reorder']}\n"
+            )
+# ==============================
+# LOG TRANSACTION
+# ==============================
+def log_transaction(pid, ttype, qty):
+    time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    transactions.append((time, pid, ttype, qty))
+# ==============================
+# ADD PRODUCT
+# ==============================
+def add_product():
+    pid = input("Enter Product ID: ").strip()
+
+    if pid in inventory:
+        print("Product ID already exists!")
+        return
+
+    name = input("Enter Product Name: ")
+    category = input("Enter Category: ")
+    price = float(input("Enter Price: "))
+    qty = int(input("Enter Quantity: "))
+    reorder = int(input("Enter Reorder Level: "))
+
+    inventory[pid] = {
+        "name": name,
+        "category": category,
+        "price": price,
+        "qty": qty,
+        "reorder": reorder
+    }
+
+    print("Product Added Successfully!")
+# ==============================
+# STOCK IN
+# ==============================
+def stock_in():
+    pid = input("Enter Product ID: ")
+
+    if pid not in inventory:
+        print("Product not found!")
+        return
+
+    qty = int(input("Enter Quantity to Add: "))
+
+    inventory[pid]["qty"] += qty
+
+    log_transaction(pid, "IN", qty)
+
+    print("Stock Updated (IN)")
+# ==============================
+# STOCK OUT
+# ==============================
+def stock_out():
+    pid = input("Enter Product ID: ")
+
+    if pid not in inventory:
+        print("Product not found!")
+        return
+
+    qty = int(input("Enter Quantity to Sell: "))
+
+    if inventory[pid]["qty"] < qty:
+        print("Not enough stock!")
+        return
+
+    inventory[pid]["qty"] -= qty
+
+    log_transaction(pid, "OUT", qty)
+
+    print("Stock Updated (OUT)")
+# ==============================
+# VIEW INVENTORY
+# ==============================
+def view_inventory():
+    print("\n===== INVENTORY LIST =====")
+
+    print(f"{'ID':<6}{'Name':<15}{'Category':<15}{'Price':<10}{'Qty':<8}{'Value'}")
+    print("-" * 70)
+
+    for pid, p in inventory.items():
+        value = p["price"] * p["qty"]
+
+        print(
+            f"{pid:<6}{p['name']:<15}{p['category']:<15}"
+            f"{p['price']:<10}{p['qty']:<8}{value}"
+        )
+# ==============================
+# LOW STOCK ALERT
+# ==============================
+def low_stock():
+    print("\n===== LOW STOCK ITEMS =====")
+
+    found = False
+
+    for pid, p in inventory.items():
+        if p["qty"] <= p["reorder"]:
+            found = True
+            print(pid, p["name"], "Qty:", p["qty"])
+
+    if not found:
+        print("No low stock items")
+# ==============================
+# TOTAL VALUE
+# ==============================
+def total_value():
+    total = 0
+
+    for p in inventory.values():
+        total += p["price"] * p["qty"]
+
+    return total
+# ==============================
+# REPORT
+# ==============================
+def report():
+    categories = set()
+
+    highest_item = None
+    highest_value = 0
+
+    for pid, p in inventory.items():
+
+        categories.add(p["category"])
+
+        value = p["price"] * p["qty"]
+
+        if value > highest_value:
+            highest_value = value
+            highest_item = (pid, p)
+
+    print("\n===== INVENTORY REPORT =====")
+
+    print("Total Products:", len(inventory))
+
+    print("Total Value:", total_value())
+
+    print("Categories:", ", ".join(categories))
+
+    print("Highest Value Item:",
+          highest_item[1]["name"],
+          "Value:", highest_value)
+# ============================
+# VIEW TRANSACTIONS
+# ==============================
+def view_transactions():
+    print("\n===== TRANSACTIONS =====")
+
+    for t in transactions:
+        print(t)
+# ==============================
+# MAIN MENU
+# ==============================
+def main():
+
+    load_inventory()
+
+    while True:
+
+        print("\n===== INVENTORY MANAGEMENT SYSTEM =====")
+
+        print("1. Add Product")
+        print("2. Stock In")
+        print("3. Stock Out")
+        print("4. View Inventory")
+        print("5. Low Stock Alert")
+        print("6. Report")
+        print("7. View Transactions")
+        print("8. Save & Exit")
+
+        choice = input("Enter Choice: ")
+
+        if choice == "1":
+            add_product()
+
+        elif choice == "2":
+            stock_in()
+
+        elif choice == "3":
+            stock_out()
+
+        elif choice == "4":
+            view_inventory()
+
+        elif choice == "5":
+            low_stock()
+
+        elif choice == "6":
+            report()
+
+        elif choice == "7":
+            view_transactions()
+
+        elif choice == "8":
+            save_inventory()
+            print("Data Saved. Exiting...")
+            break
+
+        else:
+            print("Invalid Choice!")
+# RUN PROGRAM
+main()

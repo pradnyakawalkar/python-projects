@@ -1,0 +1,41 @@
+========== LIBRARY REPORT ==========
+ISBN: 978001
+Title: Python Programming
+Author: John Smith
+Status: Available
+----------------------------------------
+ISBN: 978002
+Title: Data Structures
+Author: Mark Lee
+Status: Available
+----------------------------------------
+ISBN: 978003
+Title: Database Systems
+Author: Thomas Roy
+Status: Available
+----------------------------------------
+ISBN: 978004
+Title: Machine Learning
+Author: Andrew Ng
+Status: Issued
+----------------------------------------
+ISBN: 978005
+Title: Operating Systems
+Author: Silberschatz
+Status: Available
+----------------------------------------
+ISBN: 978006
+Title: Swami
+Author: Ranjit Desai
+Status: Available
+----------------------------------------
+ISBN: 978009
+Title: Shriman yogi
+Author: Babasaheb purandare
+Status: Available
+----------------------------------------
+ISBN: 879045
+Title: Ramayana
+Author: Valmik rushi
+Status: Available
+----------------------------------------
